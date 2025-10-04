@@ -1,0 +1,573 @@
+<!DOCTYPE html><html lang="vi"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">    <title>Nghe và Viết Chính Tả: My First Sentences</title>    <link rel="preconnect" href="https://fonts.googleapis.com">    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">    <style>        :root {            --primary-color: #ec407a; /* Hồng */            --primary-dark: #c2185b;            --success-color: #4caf50;            --error-color: #f44336;            --light-bg: #fce4ec;            --text-color: #333;            --white-color: #ffffff;
+            --yellow-color: #ffc107;            /* Màu cho các nút chủ đề */
+            --topic-color-1: #ef5350; /* Đỏ nhạt */
+            --topic-color-2: #42a5f5; /* Xanh dương */
+            --topic-color-3: #66bb6a; /* Xanh lá */
+            --topic-color-4: #ffa726; /* Cam */
+            --topic-color-5: #ab47bc; /* Tím */
+        }        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(120deg, #f8bbd0 0%, #ce93d3 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text-color);
+            overscroll-behavior: none;
+            -webkit-tap-highlight-color: transparent;
+        }        .container {
+            text-align: center;
+            padding: 25px;
+            max-width: 900px;
+            width: 95%;
+            background: var(--white-color);
+            border-radius: 24px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1), 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+        }        .game-title {
+            font-size: clamp(1.8em, 5vw, 2.5em);
+            color: var(--primary-color);
+            margin: 0 0 5px;
+            font-weight: 700;
+        }        .game-subtitle {
+            font-size: clamp(1.2em, 4vw, 1.5em);
+            margin-bottom: 20px;
+            color: #555;
+            font-weight: 600;
+        }        .meaning {
+            font-size: clamp(1.1em, 4.5vw, 1.6em);
+            color: var(--primary-dark);
+            margin: 15px 0;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }        .input-container {
+            position: relative;
+            margin: 30px 0;
+        }        #answerInput {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: clamp(1.1em, 4vw, 1.6em);
+            font-family: 'Nunito', sans-serif;
+            border-radius: 12px;
+            border: 3px solid var(--primary-color);
+            box-sizing: border-box;
+            text-align: center;
+            transition: all 0.3s ease;
+        }        #answerInput:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(236, 64, 122, 0.3);
+        }        #answerInput.correct {
+            border-color: var(--success-color);
+            background-color: #e8f5e9;
+        }        #answerInput.incorrect {
+            border-color: var(--error-color);
+            animation: shake 0.5s;
+        }        #hint {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: clamp(1.1em, 4vw, 1.6em);
+            font-weight: 600;
+            pointer-events: none;
+            z-index: 10;
+            width: max-content;
+            max-width: 90%;
+        }        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }        button {
+            background: var(--primary-color);
+            color: var(--white-color);
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-size: clamp(0.9em, 3.5vw, 1.1em);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }        button:hover, button:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            outline: none;
+        }        button#resetBtn { background-color: #757575; }        button#resetBtn:hover { background-color: #616161; }        button#checkBtn { background-color: var(--success-color); }        button#checkBtn:hover { background: #388e3c; }        button#hintBtn { background-color: var(--yellow-color); color: var(--text-color); }        button#hintBtn:hover { background-color: #ffb300; }        button:disabled {
+            background: #bdbdbd;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }        .score {
+            font-size: clamp(1.1em, 4vw, 1.4em);
+            margin-top: 20px;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }        .message {
+            font-size: clamp(1.1em, 4vw, 1.4em);
+            color: var(--error-color);
+            margin: 15px 0;
+            font-weight: 700;
+            min-height: 25px;
+        }        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }        .start-screen, .topic-selection-screen, .topic-congrats-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }        #startBtn, .topic-btn, .congrats-btn {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 450px;
+        }        #startBtn { background-color: var(--success-color); }        #startBtn:hover { background: #388e3c; }        .topic-btn-color-1 { background-color: var(--topic-color-1); }        .topic-btn-color-1:hover { background-color: #d32f2f; }        .topic-btn-color-2 { background-color: var(--topic-color-2); }        .topic-btn-color-2:hover { background-color: #1976d2; }        .topic-btn-color-3 { background-color: var(--topic-color-3); }        .topic-btn-color-3:hover { background-color: #388e3c; }        .topic-btn-color-4 { background-color: var(--topic-color-4); }        .topic-btn-color-4:hover { background-color: #f57c00; }        .topic-btn-color-5 { background-color: var(--topic-color-5); }        .topic-btn-color-5:hover { background-color: #8e24aa; }        #playerNameInput {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.2em;
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 2px solid var(--primary-color);
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
+        }        #playerNameInput:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(236, 64, 122, 0.3);
+        }        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            button { padding: 10px 20px; }
+        }    </style></head><body>    <canvas id="fireworks"></canvas>    <div class="container">        <div class="game-title">NGHE VÀ VIẾT CHÍNH TẢ</div>        <div class="game-subtitle" id="gameSubtitle">(Dictation Practice)</div>                <div class="start-screen" id="startScreen">            <input type="text" id="playerNameInput" placeholder="Nhập tên của bạn...">            <button id="startBtn">Bắt đầu</button>        </div>
+        <div class="topic-selection-screen" id="topicSelectionScreen" style="display: none;">            <!-- Topic buttons will be generated here -->        </div>
+        <div class="game-screen" id="gameScreen" style="display: none;">            <div class="meaning" id="meaning"></div>            <div class="input-container">                <input type="text" id="answerInput" placeholder="Nhập câu bạn nghe được..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">                <div id="hint"></div>            </div>            <div class="message" id="message"></div>            <div class="buttons">                <button id="listenAgainBtn">Nghe lại</button>                <button id="checkBtn">Kiểm tra</button>                <button id="hintBtn">Gợi ý</button>                <button id="resetBtn">Chủ đề khác</button>            </div>            <div class="score" id="score"></div>        </div>
+        <div class="topic-congrats-screen" id="topicCongratsScreen" style="display: none;">            <div class="message" id="congratsMessage" style="color: var(--success-color); font-size: 1.5em;"></div>            <button class="congrats-btn" id="playTopicAgainBtn">Chơi lại chủ đề này</button>            <button class="congrats-btn" id="chooseAnotherTopicBtn">Chọn chủ đề khác</button>        </div>    </div>
+    <script>    const topics = {        "Bài Tập IOE K5": [
+            { en: "What time do they have dinner?", vi: "Họ ăn tối lúc mấy giờ?", emoji: "⏰" },
+            { en: "Do their parents live in Hue City?", vi: "Bố mẹ họ có sống ở thành phố Huế không?", emoji: "🇻🇳" },
+            { en: "The children can learn a lot of things at school.", vi: "Bọn trẻ có thể học nhiều thứ ở trường.", emoji: "🏫" },
+            { en: "A blind person can not see anything.", vi: "Một người mù không thể nhìn thấy gì.", emoji: "🚫" },
+            { en: "The food is great.", vi: "Món ăn tuyệt vời.", emoji: "😋" },
+            { en: "I will stay at home to help my mom clean my house.", vi: "Tôi sẽ ở nhà giúp mẹ dọn dẹp nhà cửa.", emoji: "🏠" },
+            { en: "My brother has a pair of brown shoes.", vi: "Anh trai (em trai) tôi có một đôi giày màu nâu.", emoji: "👟" },
+            { en: "What time does your father go to work?", vi: "Bố bạn đi làm lúc mấy giờ?", emoji: "⏰" },
+            { en: "Where is Thu's school? - It's in the city.", vi: "Trường của Thư ở đâu? - Nó ở thành phố.", emoji: "🏫" },
+            { en: "That is a chair.", vi: "Đó là một cái ghế.", emoji: "🪑" },
+            { en: "My elder sister is cooking in the kitchen.", vi: "Chị gái tôi đang nấu ăn trong bếp.", emoji: "🍳" },
+            { en: "Do you live near the city's supermarket?", vi: "Bạn có sống gần siêu thị thành phố không?", emoji: "🛒" },
+            { en: "Three and thirty seven is forty.", vi: "Ba cộng ba mươi bảy là bốn mươi.", emoji: "🔢" },
+            { en: "What are you listening to on the radio?", vi: "Bạn đang nghe gì trên đài radio?", emoji: "📻" },
+            { en: "You can borrow books from the library.", vi: "Bạn có thể mượn sách từ thư viện.", emoji: "📚" },
+            { en: "Does your mother go to work by bus?", vi: "Mẹ bạn có đi làm bằng xe buýt không?", emoji: "🚌" },
+            { en: "My family will explore the caves in Ha Long Bay.", vi: "Gia đình tôi sẽ khám phá các hang động ở Vịnh Hạ Long.", emoji: "🏞️" },
+            { en: "My brother often plays football in his free time.", vi: "Anh trai (em trai) tôi thường chơi bóng đá vào thời gian rảnh.", emoji: "⚽" },
+            { en: "Don't play football on the street, boys.", vi: "Các cậu bé, đừng chơi bóng đá ngoài đường.", emoji: "🚫" },
+            { en: "We are making coffee but we don't have any milk.", vi: "Chúng tôi đang pha cà phê nhưng không có sữa.", emoji: "☕" },
+            { en: "It's three kilometers from my house to my school.", vi: "Từ nhà tôi đến trường là ba kilomet.", emoji: "📏" },
+            { en: "You should try to guess the meaning of a word while you read.", vi: "Bạn nên cố gắng đoán nghĩa của một từ khi bạn đọc.", emoji: "💡" },
+            { en: "How many cakes does she want?", vi: "Cô ấy muốn bao nhiêu cái bánh?", emoji: "🎂" },
+            { en: "Where's your address? - It's at 201, Tran Hung Dao Street.", vi: "Địa chỉ của bạn ở đâu? - Nó ở số 201, đường Trần Hưng Đạo.", emoji: "🏠" },
+            { en: "We have English on Monday and Thursday. We have it twice a week.", vi: "Chúng tôi có môn tiếng Anh vào thứ Hai và thứ Năm. Chúng tôi học nó hai lần một tuần.", emoji: "🇬🇧" },
+            { en: "My brother and I look like my mother.", vi: "Anh trai (em trai) tôi và tôi trông giống mẹ tôi.", emoji: "👩‍👧‍👦" },
+            { en: "Every morning she gets up early.", vi: "Mỗi sáng cô ấy thức dậy sớm.", emoji: "⏰" },
+            { en: "Clara sometimes goes out with a friend for dinner.", vi: "Clara thỉnh thoảng đi ăn tối với một người bạn.", emoji: "🍴" },
+            { en: "What's the date today? - It's 21st November.", vi: "Hôm nay là ngày bao nhiêu? - Là ngày 21 tháng Mười Một.", emoji: "📅" },
+            { en: "Where is Paula? - She is in her room.", vi: "Paula ở đâu? - Cô ấy đang ở trong phòng.", emoji: "🚪" },
+            { en: "They prepare food and drink for their holiday.", vi: "Họ chuẩn bị đồ ăn và thức uống cho kỳ nghỉ của họ.", emoji: "🏖️" },
+            { en: "When was the last birthday party you went to?", vi: "Bữa tiệc sinh nhật cuối cùng bạn đi là khi nào?", emoji: "🎂" },
+            { en: "How much sugar is there in the glass?", vi: "Có bao nhiêu đường trong cốc?", emoji: "❓" },
+            { en: "Nam gives Mai an orange sock.", vi: "Nam tặng Mai một chiếc tất màu cam.", emoji: "🧦" },
+            { en: "Is this green? - Yes, it is. It is green.", vi: "Cái này màu xanh lá phải không? - Vâng, phải. Nó màu xanh lá.", emoji: "🟢" },
+            { en: "Is your father going to have tea and read a newspaper?", vi: "Bố bạn sẽ uống trà và đọc báo phải không?", emoji: "📰" },
+            { en: "What is your favorite color? - I like red.", vi: "Màu sắc yêu thích của bạn là gì? - Tôi thích màu đỏ.", emoji: "🔴" },
+            { en: "What colour do you like? - Pink.", vi: "Bạn thích màu gì? - Màu hồng.", emoji: "💖" },
+            { en: "He'll be an astronaut.", vi: "Cậu ấy sẽ trở thành một phi hành gia.", emoji: "👨‍🚀" },
+            { en: "He stops smoking to save money.", vi: "Anh ấy bỏ hút thuốc để tiết kiệm tiền.", emoji: "🚭" },
+            { en: "I am happy because today is my birthday.", vi: "Tôi vui vì hôm nay là sinh nhật tôi.", emoji: "😊" },
+            { en: "I really enjoy it.", vi: "Tôi thực sự thích nó.", emoji: "😃" },
+            { en: "Linh lives and works in a small village.", vi: "Linh sống và làm việc ở một ngôi làng nhỏ.", emoji: "🏡" },
+            { en: "How does she travel to Hanoi? She travels to Hanoi by plane.", vi: "Cô ấy đi Hà Nội bằng phương tiện gì? Cô ấy đi bằng máy bay.", emoji: "✈️" },
+            { en: "How do you go to school? On foot.", vi: "Bạn đi học bằng cách nào? Đi bộ.", emoji: "🚶" },
+            { en: "Where are your parents? They are watching TV in the living room.", vi: "Bố mẹ bạn ở đâu? Họ đang xem TV trong phòng khách.", emoji: "📺" },
+            { en: "I didn't watch that cartoon on TV last night.", vi: "Tối qua tôi đã không xem bộ phim hoạt hình đó trên TV.", emoji: "📺" },
+            { en: "I'm going to draw my house.", vi: "Tôi sẽ vẽ nhà của tôi.", emoji: "🎨" },
+            { en: "Do you have any interesting activities at your club?", vi: "Câu lạc bộ của bạn có hoạt động thú vị nào không?", emoji: "❓" },
+            { en: "September 2nd is our National Day.", vi: "Ngày 2 tháng 9 là Quốc khánh của chúng ta.", emoji: "🇻🇳" },
+            { en: "What time did you get up yesterday?", vi: "Hôm qua bạn thức dậy lúc mấy giờ?", emoji: "⏰" },
+            { en: "This is Toby. His toy is under the tree.", vi: "Đây là Toby. Đồ chơi của cậu ấy ở dưới cái cây.", emoji: "🧸" },
+            { en: "The puppets are beautiful.", vi: "Những con rối thật đẹp.", emoji: "🎎" },
+            { en: "What do you prefer, fairy tales or short stories?", vi: "Bạn thích truyện cổ tích hay truyện ngắn hơn?", emoji: "📚" },
+            { en: "He sometimes plays video games at the weekend.", vi: "Cậu ấy thỉnh thoảng chơi trò chơi điện tử vào cuối tuần.", emoji: "🎮" },
+            { en: "Cheese is made from milk.", vi: "Phô mai được làm từ sữa.", emoji: "🧀" },
+            { en: "Did you go on a picnic with your family last weekend?", vi: "Cuối tuần trước bạn có đi dã ngoại với gia đình không?", emoji: "🧺" },
+            { en: "Does Mr. Smith want a new raincoat?", vi: "Ông Smith có muốn một chiếc áo mưa mới không?", emoji: "☔" },
+            { en: "After school, Jane plays badminton with her brother.", vi: "Sau giờ học, Jane chơi cầu lông với anh trai (em trai) mình.", emoji: "🏸" },
+            { en: "Why don't we go camping? That's a good idea.", vi: "Sao chúng ta không đi cắm trại? Đó là một ý kiến hay.", emoji: "🏕️" },
+            { en: "Students should review their work before test.", vi: "Học sinh nên ôn tập bài trước khi kiểm tra.", emoji: "📝" },
+            { en: "Can you guess his job?", vi: "Bạn có thể đoán nghề của cậu ấy không?", emoji: "❓" },
+            { en: "I have some homework today.", vi: "Hôm nay tôi có bài tập về nhà.", emoji: "📚" },
+            { en: "How many notebooks do you want to buy?", vi: "Bạn muốn mua bao nhiêu quyển sổ?", emoji: "❓" },
+            { en: "My brother watches TV more often than I do.", vi: "Anh trai (em trai) tôi xem TV thường xuyên hơn tôi.", emoji: "📺" },
+            { en: "What is your address? 61 Nguyen Trai Street, Thanh Xuan, Hanoi.", vi: "Địa chỉ của bạn là gì? 61 đường Nguyễn Trãi, Thanh Xuân, Hà Nội.", emoji: "🏠" },
+            { en: "My classmates are waiting for me at the cinema.", vi: "Các bạn cùng lớp đang đợi tôi ở rạp chiếu phim.", emoji: "🎬" },
+            { en: "What grade is Quan in? - He's in grade 5.", vi: "Quân học lớp mấy? - Cậu ấy học lớp 5.", emoji: "5️⃣" },
+            { en: "Do you often visit museums at weekends?", vi: "Bạn có thường ghé thăm các bảo tàng vào cuối tuần không?", emoji: "🏛️" },
+            { en: "I live in a village.", vi: "Tôi sống ở một ngôi làng.", emoji: "🏡" },
+            { en: "I have Science twice a week, on Tuesday and Thursday.", vi: "Tôi có môn Khoa học hai lần một tuần, vào thứ Ba và thứ Năm.", emoji: "🔬" },
+            { en: "He never goes to the cafeteria at lunchtime.", vi: "Cậu ấy không bao giờ đến căng tin vào giờ ăn trưa.", emoji: "🚫" },
+            { en: "What would you like to drink? Orange juice, please.", vi: "Bạn muốn uống gì? Làm ơn cho nước cam.", emoji: "🍊" },
+            { en: "What colours are the flowers? Pink and white.", vi: "Những bông hoa màu gì? Màu hồng và trắng.", emoji: "🌸" },
+            { en: "It's often warm in summer and cool in autumn.", vi: "Trời thường ấm vào mùa hè và mát vào mùa thu.", emoji: "☀️" },
+            { en: "Classes start at seven and end at half past seven.", vi: "Các lớp học bắt đầu lúc 7 giờ và kết thúc lúc 7 giờ rưỡi.", emoji: "⏰" },
+            { en: "Who is waiting for him?", vi: "Ai đang đợi cậu ấy?", emoji: "❓" },
+            { en: "We are waiting for our friends.", vi: "Chúng tôi đang đợi bạn bè của mình.", emoji: "🧑‍🤝‍🧑" },
+            { en: "What will we do in the morning? We'll do exercise then go to school.", vi: "Chúng ta sẽ làm gì vào buổi sáng? Chúng ta sẽ tập thể dục rồi đi học.", emoji: "🤸" },
+            { en: "He always has chicken and rice for lunch.", vi: "Cậu ấy luôn ăn gà và cơm vào bữa trưa.", emoji: "🍚" },
+            { en: "What was the weather like yesterday?", vi: "Thời tiết hôm qua như thế nào?", emoji: "❓" },
+            { en: "I saw some monkeys at the zoo.", vi: "Tôi đã thấy vài con khỉ ở sở thú.", emoji: "🐒" },
+            { en: "They climbed trees quickly and liked bananas.", vi: "Chúng trèo cây nhanh và thích chuối.", emoji: "🐒" },
+            { en: "When were you born? In July.", vi: "Bạn sinh ra khi nào? Vào tháng Bảy.", emoji: "🎂" },
+            { en: "The seas and rivers are too dirty to swim in.", vi: "Biển và sông quá bẩn để bơi.", emoji: "💧" },
+            { en: "How far is it from your house to school? It's about 2 kilometers.", vi: "Từ nhà bạn đến trường bao xa? Khoảng 2 kilomet.", emoji: "📏" },
+            { en: "Did you go to Mai's birthday party?", vi: "Bạn có đi dự tiệc sinh nhật của Mai không?", emoji: "🎂" },
+            { en: "\"Fall\" means \"autumn\" in British English.", vi: "\"Fall\" có nghĩa là \"autumn\" trong tiếng Anh Anh.", emoji: "🍁" },
+            { en: "I ride my bicycle to school every day.", vi: "Tôi đạp xe đạp đi học mỗi ngày.", emoji: "🚲" },
+            { en: "Would you like a cup of tea?", vi: "Bạn có muốn một tách trà không?", emoji: "☕" },
+            { en: "She lives in a small house and she doesn't like it.", vi: "Cô ấy sống trong một ngôi nhà nhỏ và cô ấy không thích nó.", emoji: "🏠" },
+            { en: "Is he ten years old? No, he is not.", vi: "Cậu ấy mười tuổi phải không? Không, không phải.", emoji: "🔟" },
+            { en: "I want to eat two eggs now, I'm too hungry.", vi: "Tôi muốn ăn hai quả trứng bây giờ, tôi quá đói.", emoji: "🥚" },
+            { en: "She reads newspapers 3 times a week.", vi: "Cô ấy đọc báo 3 lần một tuần.", emoji: "📰" },
+            { en: "Phong will stay at home this weekend because he has to study.", vi: "Phong sẽ ở nhà cuối tuần này vì cậu ấy phải học.", emoji: "🏠" },
+            { en: "Are those the toys you want to buy?", vi: "Đó có phải là những món đồ chơi bạn muốn mua không?", emoji: "🧸" },
+            { en: "My parents always come home late in the afternoon.", vi: "Bố mẹ tôi luôn về nhà muộn vào buổi chiều.", emoji: "👨‍👩‍👧" },
+            { en: "Don't talk about people behind their backs.", vi: "Đừng nói xấu người khác sau lưng họ.", emoji: "🤫" },
+            { en: "How much money do you have?", vi: "Bạn có bao nhiêu tiền?", emoji: "💲" },
+            { en: "I'd like to pay for this food. Where is the shop assistant?", vi: "Tôi muốn thanh toán cho món ăn này. Nhân viên cửa hàng ở đâu?", emoji: "🛒" },
+            { en: "Does Jack often do aerobics in summer?", vi: "Jack có thường tập aerobic vào mùa hè không?", emoji: "🤸" },
+            { en: "Anna was excited and happy about the good news.", vi: "Anna đã rất phấn khích và vui mừng về tin tốt.", emoji: "😊" },
+            { en: "You should ride slowly.", vi: "Bạn nên đi xe chậm lại.", emoji: "🐌" },
+            { en: "Her face was pretty, too.", vi: "Khuôn mặt cô ấy cũng xinh đẹp.", emoji: "👩" },
+            { en: "Another word for \"table tennis\" is \"ping-pong\".", vi: "Một từ khác cho \"bóng bàn\" là \"ping-pong\".", emoji: "🏓" },
+            { en: "I don't like to talk to him.", vi: "Tôi không thích nói chuyện với cậu ấy.", emoji: "🚫" },
+            { en: "Mary is the only child of her parents.", vi: "Mary là con một của bố mẹ cô ấy.", emoji: "👧" },
+            { en: "Her classmate likes Music best.", vi: "Bạn cùng lớp của cô ấy thích Âm nhạc nhất.", emoji: "🎵" },
+            { en: "He travels to Japan by airplane.", vi: "Cậu ấy đi Nhật Bản bằng máy bay.", emoji: "✈️" },
+            { en: "Which province is in Central Vietnam?", vi: "Tỉnh nào thuộc miền Trung Việt Nam?", emoji: "🇻🇳" },
+            { en: "What's the matter with you?", vi: "Bạn bị làm sao vậy?", emoji: "❓" },
+            { en: "Could you close the window for me?", vi: "Bạn có thể đóng cửa sổ giúp tôi không?", emoji: "🪟" },
+            { en: "Is she from Malaysia?", vi: "Cô ấy đến từ Malaysia phải không?", emoji: "🇲🇾" },
+            { en: "My sister and I usually watch cartoons on TV in the evening.", vi: "Chị (em) gái tôi và tôi thường xem phim hoạt hình trên TV vào buổi tối.", emoji: "📺" },
+            { en: "Are you waiting for the train? Yes, I am.", vi: "Bạn đang đợi tàu phải không? Vâng, phải.", emoji: "🚂" },
+            { en: "I love fruits. I always eat fruits after dinner.", vi: "Tôi yêu trái cây. Tôi luôn ăn trái cây sau bữa tối.", emoji: "🍎" },
+            { en: "Where can I learn about animals? Maybe at the zoo.", vi: "Tôi có thể học về động vật ở đâu? Có lẽ ở sở thú.", emoji: "🦒" },
+            { en: "I'd like some tomatoes for my breakfast.", vi: "Tôi muốn một ít cà chua cho bữa sáng của tôi.", emoji: "🍅" },
+            { en: "How are you going to get to Hung King Temple next weekend? By bus.", vi: "Bạn sẽ đến Đền Hùng bằng cách nào vào cuối tuần tới? Bằng xe buýt.", emoji: "🚌" },
+            { en: "Why do you like football?", vi: "Tại sao bạn thích bóng đá?", emoji: "❓" },
+            { en: "This is a magic lamp.", vi: "Đây là một cây đèn thần.", emoji: "🧞" },
+            { en: "It is raining heavily.", vi: "Trời đang mưa to.", emoji: "🌧️" },
+            { en: "Miss Kate is pretty.", vi: "Cô Kate xinh đẹp.", emoji: "👩" },
+            { en: "She eats potatoes, but her brother doesn't.", vi: "Cô ấy ăn khoai tây, nhưng anh trai (em trai) cô ấy thì không.", emoji: "🥔" },
+            { en: "You can buy some books or some pens at the bookshop.", vi: "Bạn có thể mua một vài quyển sách hoặc vài cây bút ở hiệu sách.", emoji: "📚" },
+            { en: "Are you sure of your answer?", vi: "Bạn có chắc chắn về câu trả lời của mình không?", emoji: "❓" },
+            { en: "It's the most exciting event in London every year.", vi: "Đó là sự kiện thú vị nhất ở London mỗi năm.", emoji: "🇬🇧" },
+            { en: "Where is your best friend from?", vi: "Bạn thân nhất của bạn đến từ đâu?", emoji: "❓" },
+            { en: "What was the matter with him? He had a toothache.", vi: "Cậu ấy bị làm sao? Cậu ấy bị đau răng.", emoji: "🤕" },
+            { en: "Don't run straight across the road.", vi: "Đừng chạy thẳng qua đường.", emoji: "🛑" },
+            { en: "What does your little sister do in her free time? She listens to music.", vi: "Em gái bạn làm gì vào thời gian rảnh? Cô ấy nghe nhạc.", emoji: "🎧" },
+            { en: "The girl likes reading books.", vi: "Cô gái thích đọc sách.", emoji: "📖" },
+            { en: "When does school year start and finish?", vi: "Năm học bắt đầu và kết thúc khi nào?", emoji: "📅" },
+            { en: "These pens are expensive.", vi: "Những cây bút này đắt tiền.", emoji: "💲" },
+            { en: "Alan wants to be a taxi driver.", vi: "Alan muốn trở thành tài xế taxi.", emoji: "🚕" },
+            { en: "How do you go to school? I walk.", vi: "Bạn đi học bằng cách nào? Tôi đi bộ.", emoji: "🚶" },
+            { en: "Do you enjoy playing games with friends?", vi: "Bạn có thích chơi trò chơi với bạn bè không?", emoji: "🎮" },
+            { en: "There were a lot of interesting activities at the party.", vi: "Có rất nhiều hoạt động thú vị trong bữa tiệc.", emoji: "🎉" },
+            { en: "He looked at the board and listened to the teacher carefully.", vi: "Cậu ấy nhìn lên bảng và lắng nghe giáo viên cẩn thận.", emoji: "👂" },
+            { en: "We get dressed, then we brush our teeth.", vi: "Chúng tôi mặc quần áo, sau đó đánh răng.", emoji: "🦷" },
+            { en: "My mother is tired enough to cook tonight.", vi: "Mẹ tôi mệt đến nỗi không thể nấu ăn tối nay.", emoji: "ired" },
+            { en: "Everyday, I get up early to do morning exercises.", vi: "Mỗi ngày, tôi thức dậy sớm để tập thể dục buổi sáng.", emoji: "🤸" },
+            { en: "at the end of the path.", vi: "ở cuối con đường.", emoji: "🛤️" },
+            { en: "Look at that strange man. He is looking for Lan but she isn't here.", vi: "Nhìn người đàn ông lạ kia. Ông ấy đang tìm Lan nhưng cô ấy không ở đây.", emoji: "🕵️" },
+            { en: "Someday I will go out and walk in space.", vi: "Một ngày nào đó tôi sẽ ra ngoài và đi bộ trong không gian.", emoji: "🚀" },
+            { en: "I'm not hungry but I'm thirsty.", vi: "Tôi không đói nhưng tôi khát.", emoji: "💧" },
+            { en: "My father knows a lot about Vietnamese history.", vi: "Bố tôi biết rất nhiều về lịch sử Việt Nam.", emoji: "🇻🇳" },
+            { en: "Everyone often claps their hands when she sings.", vi: "Mọi người thường vỗ tay khi cô ấy hát.", emoji: "👏" },
+            { en: "He doesn't often go jogging.", vi: "Cậu ấy không thường chạy bộ.", emoji: "🏃" },
+            { en: "\"There are 32 students in my class\" means \"My class has 32 students\".", vi: "\"Có 32 học sinh trong lớp tôi\" có nghĩa là \"Lớp tôi có 32 học sinh\".", emoji: "🔢" },
+            { en: "Why does she get up so early?", vi: "Tại sao cô ấy dậy sớm vậy?", emoji: "❓" }
+        ]
+    };
+    const elements = {        startScreen: document.getElementById('startScreen'),        gameScreen: document.getElementById('gameScreen'),        topicSelectionScreen: document.getElementById('topicSelectionScreen'),        topicCongratsScreen: document.getElementById('topicCongratsScreen'),        meaning: document.getElementById('meaning'),        message: document.getElementById('message'),        listenAgainBtn: document.getElementById('listenAgainBtn'),        resetBtn: document.getElementById('resetBtn'),        startBtn: document.getElementById('startBtn'),        playTopicAgainBtn: document.getElementById('playTopicAgainBtn'),        chooseAnotherTopicBtn: document.getElementById('chooseAnotherTopicBtn'),        score: document.getElementById('score'),        canvas: document.getElementById('fireworks'),        playerNameInput: document.getElementById('playerNameInput'),        congratsMessage: document.getElementById('congratsMessage'),        gameSubtitle: document.getElementById('gameSubtitle'),        answerInput: document.getElementById('answerInput'),        checkBtn: document.getElementById('checkBtn'),        hintBtn: document.getElementById('hintBtn'),        hint: document.getElementById('hint'),    };
+    let state = {};    const isSpeechSupported = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+    function initializeState() {        state = {            playerName: state.playerName || '',            currentTopic: null,            currentSentences: [],            originalSentence: '',            score: 0,            completedSentences: 0,            correctlyAnsweredCount: 0,            currentSentenceIndex: 0,            isSpeaking: false,            animationFrameId: null,            speechTimeoutId: null,            audioIntervalId: null,            mistakeCount: 0,            nextSentenceTimeoutId: null        };    }
+    function initializeSpeech() {        if (isSpeechSupported && speechSynthesis.getVoices().length === 0) {            speechSynthesis.onvoiceschanged = () => console.log("Voices loaded.");        }    }
+    function speak(text, options = {}) {        const callback = typeof options === 'function' ? options : options.callback;        const rate = options.rate || 1.0;
+        if (!isSpeechSupported) { if (callback) callback(); return; }                // Stop any currently playing audio loop or pending speech        stopAudioLoop(false); // Pass false to not cancel current speech if not needed
+        if (speechSynthesis.speaking) {            speechSynthesis.cancel();        }
+        state.isSpeaking = true;        const utterance = new SpeechSynthesisUtterance(text);        utterance.lang = 'en-US';        utterance.rate = rate;
+        utterance.onend = () => {            state.isSpeaking = false;            state.speechTimeoutId = null;            if (callback) callback();        };
+        utterance.onerror = (event) => {            if (event.error !== 'interrupted') console.error('SpeechSynthesis Error:', event.error);            state.isSpeaking = false;            state.speechTimeoutId = null;            if (callback) callback();        };
+        state.speechTimeoutId = setTimeout(() => {            speechSynthesis.speak(utterance);        }, 100);    }        function updateScoreDisplay() {        elements.score.textContent = `Điểm: ${state.score} | Hoàn thành: ${state.completedSentences}/${state.currentSentences.length}`;    }
+    function startAudioLoop() {        stopAudioLoop();        speak(state.originalSentence, { rate: 0.9 });        state.audioIntervalId = setInterval(() => {            speak(state.originalSentence, { rate: 0.9 });        }, 5000);    }
+    function stopAudioLoop(cancelSpeech = true) {        if (state.audioIntervalId) clearInterval(state.audioIntervalId);        if (state.speechTimeoutId) clearTimeout(state.speechTimeoutId);        if (state.nextSentenceTimeoutId) clearTimeout(state.nextSentenceTimeoutId);        state.audioIntervalId = null;        state.speechTimeoutId = null;        state.nextSentenceTimeoutId = null;        if (cancelSpeech && isSpeechSupported && speechSynthesis.speaking) {            speechSynthesis.cancel();
+        }    }
+    function startNewSentence() {        if (state.completedSentences >= state.currentSentences.length) {            showTopicCongratulations();
+            return;
+        }        const currentData = state.currentSentences[state.currentSentenceIndex];        state.originalSentence = currentData.en;        state.mistakeCount = 0;
+        elements.meaning.innerHTML = `<span>&ldquo;${currentData.vi}&rdquo;</span><span>${currentData.emoji}</span>`;        elements.message.textContent = '';        elements.message.style.color = 'var(--error-color)';                const input = elements.answerInput;        input.value = '';        input.disabled = false;
+        input.classList.remove('correct', 'incorrect');
+        input.focus();                elements.checkBtn.disabled = false;
+        elements.listenAgainBtn.disabled = false;
+        elements.hintBtn.disabled = false;                updateScoreDisplay();
+        startAudioLoop();
+    }
+    function handleCheckAnswer() {        if(elements.checkBtn.disabled) return;
+        // Chuẩn hóa câu trả lời: loại bỏ khoảng trắng dư thừa, chuyển về chữ thường để so sánh không phân biệt chữ hoa/thường (tùy chọn)
+        // Tuy nhiên, đối với bài chính tả IOE, giữ nguyên chữ hoa/thường và dấu chấm câu là quan trọng.
+        const userAnswer = elements.answerInput.value.trim();
+        const correctAnswer = state.originalSentence;
+        
+        // So sánh chính xác, bao gồm cả chữ hoa/thường và dấu chấm câu
+        if (userAnswer === correctAnswer) {            elements.answerInput.classList.remove('incorrect');
+            elements.answerInput.classList.add('correct');
+            elements.answerInput.disabled = true;
+            elements.checkBtn.disabled = true;
+            elements.hintBtn.disabled = true;
+            stopAudioLoop();
+            
+            if (state.mistakeCount < 3) {                state.score += 10;
+                state.correctlyAnsweredCount++;
+                elements.message.textContent = 'Chính xác! +10 điểm.';
+                elements.message.style.color = 'var(--success-color)';
+            }                        state.completedSentences++;
+            state.currentSentenceIndex++;
+            updateScoreDisplay();                        speak(correctAnswer, () => {
+                state.nextSentenceTimeoutId = setTimeout(startNewSentence, 2000);
+            });
+        } else {            state.mistakeCount++;
+            elements.answerInput.classList.add('incorrect');
+            setTimeout(() => {
+                elements.answerInput.classList.remove('incorrect');
+            }, 500);
+            
+            if (state.mistakeCount >= 3) {                elements.answerInput.disabled = true;
+                elements.checkBtn.disabled = true;
+                elements.hintBtn.disabled = true;
+                stopAudioLoop();
+                
+                elements.message.textContent = `Bạn đã sai 3 lần. Đáp án đúng: "${correctAnswer}"`;                                state.completedSentences++;
+                state.currentSentenceIndex++;
+                updateScoreDisplay();
+                
+                state.nextSentenceTimeoutId = setTimeout(startNewSentence, 3500);
+            } else {                elements.message.textContent = `Sai rồi! (Số lần sai: ${state.mistakeCount}/3)`;
+            }
+        }    }
+    function showTopicCongratulations() {        elements.gameScreen.style.display = 'none';
+        elements.topicCongratsScreen.style.display = 'flex';
+        elements.congratsMessage.innerHTML = `Chúc mừng <strong>${state.playerName}</strong>!<br>Bạn đã đạt ${state.score} điểm, hoàn thành đúng ${state.correctlyAnsweredCount}/${state.currentSentences.length} câu trong chủ đề "${state.currentTopic}".`;
+        startFireworks();
+    }
+    function showTopicSelection() {        stopAudioLoop();
+        stopFireworks();
+        elements.gameScreen.style.display = 'none';
+        elements.topicCongratsScreen.style.display = 'none';
+        // Đảm bảo màn hình bắt đầu cũng ẩn nếu chọn chủ đề mới
+        elements.startScreen.style.display = 'none'; 
+        elements.topicSelectionScreen.style.display = 'flex';
+        elements.gameSubtitle.textContent = "(Dictation Practice)";
+    }
+    function startGame(topic) {        initializeState();
+        state.currentTopic = topic;
+        // Trộn ngẫu nhiên danh sách câu trước khi chơi
+        const shuffledSentences = [...topics[topic]].sort(() => Math.random() - 0.5);
+        state.currentSentences = shuffledSentences; 
+        
+        elements.gameSubtitle.textContent = `Chủ đề: ${topic}`;
+        elements.topicSelectionScreen.style.display = 'none';
+        elements.gameScreen.style.display = 'block';
+        startNewSentence();
+    }
+    function createTopicButtons() {        const topicContainer = elements.topicSelectionScreen;
+        topicContainer.innerHTML = ''; // Clear existing buttons
+        let colorIndex = 1;
+        for (const topic in topics) {
+            const button = document.createElement('button');
+            button.className = `topic-btn topic-btn-color-${colorIndex}`;
+            button.textContent = topic;
+            button.onclick = () => startGame(topic);
+            topicContainer.appendChild(button);
+            colorIndex = (colorIndex % 5) + 1;
+        }    }
+    function setupEventListeners() {        elements.startBtn.addEventListener('click', () => {            const playerName = elements.playerNameInput.value.trim();
+            if (playerName) {                state.playerName = playerName;
+                elements.startScreen.style.display = 'none';
+                elements.topicSelectionScreen.style.display = 'flex';
+                // Xóa thông báo lỗi cũ nếu có
+                elements.message.textContent = '';
+            } else {
+                // Thay thế alert bằng UI message box
+                elements.message.textContent = "Vui lòng nhập tên của bạn!";
+                elements.message.style.color = 'var(--error-color)';
+                elements.playerNameInput.focus();
+                setTimeout(() => { elements.message.textContent = ''; }, 3000);
+            }        });
+        
+        elements.listenAgainBtn.addEventListener('click', () => {            if (!state.isSpeaking) {
+                speak(state.originalSentence);
+            }
+        });                elements.resetBtn.addEventListener('click', showTopicSelection);
+        
+        elements.playTopicAgainBtn.addEventListener('click', () => {            stopFireworks();
+            elements.topicCongratsScreen.style.display = 'none';
+            startGame(state.currentTopic);
+        });                elements.chooseAnotherTopicBtn.addEventListener('click', showTopicSelection);
+        
+        // New Listeners for Dictation Game
+        elements.checkBtn.addEventListener('click', handleCheckAnswer);
+        elements.answerInput.addEventListener('keydown', (e) => {            if (e.key === 'Enter' && !elements.checkBtn.disabled) {
+                handleCheckAnswer();
+            }
+        });
+        
+        const showHint = () => {            elements.hint.textContent = state.originalSentence;
+            elements.hint.style.display = 'block';
+        };        const hideHint = () => {            elements.hint.style.display = 'none';
+        };
+        
+        elements.hintBtn.addEventListener('mousedown', showHint);
+        elements.hintBtn.addEventListener('mouseup', hideHint);
+        elements.hintBtn.addEventListener('mouseleave', hideHint);
+        elements.hintBtn.addEventListener('touchstart', (e) => { e.preventDefault(); showHint(); });
+        elements.hintBtn.addEventListener('touchend', hideHint);    }        
+    // --- Fireworks Animation ---    
+    let fireworksRunning = false;
+    
+    // Đảm bảo Firework và Particle được định nghĩa đúng cách
+    let fireworks = []; // Khai báo biến fireworks và particles ở phạm vi global cho hàm startFireworks
+    let particles = [];
+    let hue = 120; // Khai báo hue ở phạm vi global
+
+    function Firework(sx, sy, tx, ty) {
+        this.x = sx; this.y = sy; this.sx = sx; this.sy = sy;
+        this.tx = tx; this.ty = ty;
+        const angle = Math.atan2(ty - sy, tx - sx); this.speed = 2;
+        this.vx = Math.cos(angle) * this.speed; this.vy = Math.sin(angle) * this.speed;
+        this.hue = hue;
+    }
+    
+    function Particle(x, y, hue) {
+        this.x = x; this.y = y; this.angle = random(0, Math.PI * 2);
+        this.speed = random(1, 5);
+        this.vx = Math.cos(this.angle) * this.speed;
+        this.vy = Math.sin(this.angle) * this.speed;
+        this.hue = hue; this.alpha = 1;
+    }
+
+    // Định nghĩa hàm random và createParticles
+    function random(min, max) { return Math.random() * (max - min) + min; }
+    function createParticles(x, y, hue) { 
+        for (let i = 0; i < 30; i++) {
+             particles.push(new Particle(x, y, hue)); 
+        }
+    }
+
+    Firework.prototype.update = function(index) {
+        const ctx = elements.canvas.getContext('2d');
+        this.x += this.vx; this.y += this.vy;
+        if (Math.sqrt(Math.pow(this.tx - this.x, 2) + Math.pow(this.ty - this.y, 2)) <= this.speed) {
+            // Lấy hue hiện tại cho các hạt
+            const currentHue = this.hue;
+            createParticles(this.tx, this.ty, currentHue);
+            fireworks.splice(index, 1);
+        }
+    };        
+    Firework.prototype.draw = function() {             
+        const ctx = elements.canvas.getContext('2d');
+        ctx.beginPath(); ctx.moveTo(this.x, this.y);             
+        ctx.lineTo(this.x - this.vx * 3, this.y - this.vy * 3);             
+        ctx.strokeStyle = `hsl(${this.hue}, 100%, 50%)`; ctx.stroke();
+    };        
+    Particle.prototype.update = function(index) {
+        this.x += this.vx; this.y += this.vy; this.alpha -= 0.01;            
+        if (this.alpha <= 0) particles.splice(index, 1);
+    };        
+    Particle.prototype.draw = function(ctx) {
+        ctx.save(); ctx.globalAlpha = this.alpha;
+        ctx.beginPath(); ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2, false);
+        ctx.fillStyle = `hsl(${this.hue}, 100%, 50%)`; ctx.fill();
+        ctx.restore();
+    };        
+
+    function startFireworks() {        
+        if (fireworksRunning) return;
+        fireworksRunning = true;
+        const ctx = elements.canvas.getContext('2d');
+        
+        // Khởi tạo lại mảng pháo hoa và hạt khi bắt đầu mới
+        fireworks = [];
+        particles = [];
+        hue = 120;
+        
+        function setCanvasSize() {            
+            elements.canvas.width = window.innerWidth;
+            elements.canvas.height = window.innerHeight;
+        }
+        
+        setCanvasSize();
+        window.addEventListener('resize', setCanvasSize);
+        
+        function loop() {            
+            if (!fireworksRunning) {                
+                ctx.clearRect(0, 0, elements.canvas.width, elements.canvas.height);
+                return;
+            }            
+            requestAnimationFrame(loop);
+            hue += 0.5;
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(0, 0, elements.canvas.width, elements.canvas.height);
+            ctx.globalCompositeOperation = 'lighter';
+            
+            if (Math.random() < 0.05) {                
+                fireworks.push(new Firework(random(0, elements.canvas.width), elements.canvas.height, random(0, elements.canvas.width), random(0, elements.canvas.height / 2)));
+            }            
+            // Cần đảm bảo hàm update và draw sử dụng mảng fireworks và particles hiện tại
+            for (let i = fireworks.length - 1; i >= 0; i--) { fireworks[i].update(i); fireworks[i].draw(); }
+            for (let i = particles.length - 1; i >= 0; i--) { particles[i].update(i); particles[i].draw(ctx); }
+        }
+        
+        loop();
+    }
+
+    function stopFireworks() {        
+        fireworksRunning = false;
+    }
+    
+    // --- Initial Load ---    
+    window.onload = () => {        
+        initializeState();
+        initializeSpeech();
+        createTopicButtons();
+        setupEventListeners();
+    };    
+    </script></body></html>
